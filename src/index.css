@@ -1,0 +1,147 @@
+/* ===== Drinkit — Global Reset & Mobile-First Base ===== */
+
+:root {
+  --brand: #3B5EEB;
+  --brand-light: #E8EDFD;
+  --brand-dark: #2A44B0;
+  --white: #FFFFFF;
+  --gray-50: #F8F7F5;
+  --gray-100: #F0EEEA;
+  --gray-200: #D8D7D2;
+  --gray-400: #9E9D98;
+  --gray-600: #6B6A66;
+  --gray-900: #1A1A18;
+
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  background: var(--gray-50);
+  overscroll-behavior: none;
+}
+
+#root {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ===== SCROLLBAR HIDE — keeps scroll, removes system bars ===== */
+* {
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE / Edge */
+}
+
+*::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari, Opera */
+  width: 0;
+  height: 0;
+}
+
+/* ===== Smooth transitions for interactive elements ===== */
+button,
+input {
+  font-family: inherit;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+input {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* ===== Animations ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pulseGlow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 94, 235, 0.25);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(59, 94, 235, 0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes progressFill {
+  from {
+    width: 0%;
+  }
+
+  to {
+    width: var(--progress, 70%);
+  }
+}
