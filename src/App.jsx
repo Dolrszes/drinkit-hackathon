@@ -51,7 +51,7 @@ const translations = {
     activeOrders: "Іс жүргілік тапсырыстар",
     pastOrders: "Өткен тапсырыстар",
     whatToOrder: "Келесі не тапсырыстарсыз?",
-    support: "Қолдау",
+    support: "AI-Бариста",
     settings: "Баптаулар",
     birthday: "Туған күні",
     favoriteMilk: "Сүйік сүт",
@@ -117,7 +117,7 @@ const translations = {
     pay: "Төлеу",
     paymentConfirm: "Төлемді растау",
     coffeepassTitle: "Кофе өтімі",
-    coffeepassPrice: "Ай сайын: 4,990 ₸",
+    coffeepassPrice: "Ай сайын: 14,990 ₸",
     coffeepassDesc: "Сүздік ішімдіктер, сақтaу күнінде ақысыз ішімдік",
     selectPayment: "Төлем әдісін таңдаңыз",
     profileSettings: "Баптаулар",
@@ -174,7 +174,7 @@ const translations = {
     activeOrders: "Активные заказы",
     pastOrders: "Прошлые заказы",
     whatToOrder: "Что заказать дальше?",
-    support: "Поддержка",
+    support: "AI-Бариста",
     settings: "Настройки",
     birthday: "День рождения",
     favoriteMilk: "Любимое молоко",
@@ -240,7 +240,7 @@ const translations = {
     pay: "Оплатить",
     paymentConfirm: "Подтверждение платежа",
     coffeepassTitle: "Кофе-пасс",
-    coffeepassPrice: "В месяц: 4,990 ₸",
+    coffeepassPrice: "В месяц: 14,990 ₸",
     coffeepassDesc: "Неограниченные напитки, один бесплатный напиток на день рождения",
     selectPayment: "Выберите способ оплаты",
     profileSettings: "Настройки профиля",
@@ -297,7 +297,7 @@ const translations = {
     activeOrders: "Active Orders",
     pastOrders: "Past Orders",
     whatToOrder: "What to order next?",
-    support: "Support",
+    support: "AI Barista",
     settings: "Settings",
     birthday: "Birthday",
     favoriteMilk: "Favorite Milk",
@@ -363,7 +363,7 @@ const translations = {
     pay: "Pay",
     paymentConfirm: "Payment Confirmation",
     coffeepassTitle: "Coffee Pass",
-    coffeepassPrice: "Monthly: 4,990 ₸",
+    coffeepassPrice: "Monthly: 14,990 ₸",
     coffeepassDesc: "Unlimited drinks, one free drink on your birthday",
     selectPayment: "Select payment method",
     profileSettings: "Settings",
@@ -1167,21 +1167,83 @@ function OrderHistoryScreen({ onNavigate, theme, language }) {
    ============================================================ */
 function SupportChatScreen({ onNavigate, theme, language }) {
   const [messages, setMessages] = useState([
-    { id: 1, text: "Сәлем! Мы здесь, чтобы помочь. Что вас интересует?", isUser: false, time: "09:30" }
+    {
+      id: 1,
+      text: "Сәлем! Мен Drinkit AI-баристамын 🤖. Қалаған дәміңізді жазыңыз (мысалы: тәтті, салқын, шаршадым).",
+      isUser: false,
+      time: new Date().toLocaleTimeString("kk-KZ", { hour: "2-digit", minute: "2-digit" })
+    }
   ]);
   const [inputValue, setInputValue] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const themeColors = themes[theme];
   const t = translations[language];
 
+  const generateAIReply = (inputText) => {
+    const lower = inputText.toLowerCase();
+
+    // Sweet/Dessert keywords
+    if (lower.match(/тәтті|сладк|sweet|сахар/i)) {
+      return "Тәттіні жақсы көресіз бе? 🤖 Біздің 'Раф Сливочное печенье' дәл сізге арналған!";
+    }
+
+    // Energy/Sleep keywords
+    if (lower.match(/ұйқы|шарша|спать|устал/i)) {
+      return "Ояну керек пе? ⚡ Мен сізге 'Айс Матча Рассвет' ұсынамын!";
+    }
+
+    // Food/Hungry keywords
+    if (lower.match(/тамақ|аш|кушать|еда/i)) {
+      return "Қарныңыз ашты ма? 🥪 'Фокачча с индейкой' өте жақсы үйлеседі.";
+    }
+
+    // Default response
+    return "Керемет! Тағы қандай тілектеріңіз бар?";
+  };
+
   const handleSend = () => {
     if (inputValue.trim()) {
-      setMessages([...messages, { id: messages.length + 1, text: inputValue, isUser: true, time: new Date().toLocaleTimeString("kk-KZ", { hour: "2-digit", minute: "2-digit" }) }]);
+      const userInput = inputValue;
+
+      // Add user message
+      const userMsg = {
+        id: messages.length + 1,
+        text: userInput,
+        isUser: true,
+        time: new Date().toLocaleTimeString("kk-KZ", { hour: "2-digit", minute: "2-digit" })
+      };
+      setMessages(prev => [...prev, userMsg]);
       setInputValue("");
 
-      // Auto-reply after 1s
+      // Show typing indicator
+      setIsTyping(true);
+      const typingMsg = {
+        id: messages.length + 2,
+        text: "AI-Бариста ойлануда...",
+        isUser: false,
+        isTyping: true,
+        time: new Date().toLocaleTimeString("kk-KZ", { hour: "2-digit", minute: "2-digit" })
+      };
+      setMessages(prev => [...prev, typingMsg]);
+
+      // Generate reply after 1.5 seconds
       setTimeout(() => {
-        setMessages(p => [...p, { id: p.length + 1, text: "Спасибо за сообщение! Мы ответим в ближайшее время.", isUser: false, time: new Date().toLocaleTimeString("kk-KZ", { hour: "2-digit", minute: "2-digit" }) }]);
-      }, 1000);
+        const reply = generateAIReply(userInput);
+        setMessages(prev => {
+          // Remove typing indicator and add actual response
+          const withoutTyping = prev.filter(m => !m.isTyping);
+          return [
+            ...withoutTyping,
+            {
+              id: withoutTyping.length + 1,
+              text: reply,
+              isUser: false,
+              time: new Date().toLocaleTimeString("kk-KZ", { hour: "2-digit", minute: "2-digit" })
+            }
+          ];
+        });
+        setIsTyping(false);
+      }, 1500);
     }
   };
 
@@ -1189,19 +1251,23 @@ function SupportChatScreen({ onNavigate, theme, language }) {
     <div style={{ display: "flex", flexDirection: "column", height: "100%", background: themeColors.bg }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px", borderBottom: `1px solid ${themeColors.border}`, color: themeColors.text }}>
         <button onClick={() => onNavigate("profile")} style={{ background: "none", border: "none", fontSize: 24, cursor: "pointer", color: themeColors.text }}>←</button>
-        <div style={{ fontSize: 18, fontWeight: 700 }}>{t.support}</div>
+        <div style={{ fontSize: 18, fontWeight: 700 }}>🤖 {t.support}</div>
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: 12 }}>
         {messages.map(msg => (
-          <div key={msg.id} style={{ display: "flex", justifyContent: msg.isUser ? "flex-end" : "flex-start" }}>
+          <div key={msg.id} style={{ display: "flex", justifyContent: msg.isUser ? "flex-end" : "flex-start", alignItems: "flex-end", gap: msg.isUser ? 0 : 8 }}>
+            {!msg.isUser && (
+              <div style={{ fontSize: 20 }}>🤖</div>
+            )}
             <div style={{
-              background: msg.isUser ? BRAND : themeColors.bgSecondary,
+              background: msg.isUser ? BRAND : BRAND_LIGHT,
               color: msg.isUser ? WHITE : themeColors.text,
               padding: "10px 14px",
               borderRadius: 14,
               maxWidth: "80%",
-              wordBreak: "break-word"
+              wordBreak: "break-word",
+              animation: msg.isTyping ? "pulse 1s infinite" : "none"
             }}>
               <div style={{ fontSize: 13 }}>{msg.text}</div>
               <div style={{ fontSize: 11, opacity: 0.7, marginTop: 4 }}>{msg.time}</div>
@@ -1210,13 +1276,21 @@ function SupportChatScreen({ onNavigate, theme, language }) {
         ))}
       </div>
 
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.6; }
+        }
+      `}</style>
+
       <div style={{ display: "flex", gap: 8, padding: "12px 16px", borderTop: `1px solid ${themeColors.border}`, background: themeColors.bg }}>
         <input
           type="text"
-          placeholder={t.typeMessage}
+          placeholder="AI-баристаға жазу..."
           value={inputValue}
           onChange={e => setInputValue(e.target.value)}
           onKeyPress={e => e.key === "Enter" && handleSend()}
+          disabled={isTyping}
           style={{
             flex: 1,
             padding: "10px 12px",
@@ -1225,17 +1299,18 @@ function SupportChatScreen({ onNavigate, theme, language }) {
             outline: "none",
             background: themeColors.card,
             color: themeColors.text,
-            fontSize: 14
+            fontSize: 14,
+            opacity: isTyping ? 0.6 : 1
           }}
         />
-        <button onClick={handleSend} style={{
+        <button onClick={handleSend} disabled={isTyping} style={{
           width: 40,
           height: 40,
           borderRadius: "50%",
           border: "none",
-          background: BRAND,
+          background: isTyping ? "#CCC" : BRAND,
           color: WHITE,
-          cursor: "pointer",
+          cursor: isTyping ? "not-allowed" : "pointer",
           fontSize: 18,
           display: "flex",
           alignItems: "center",
@@ -2302,7 +2377,7 @@ export default function DrinkitApp() {
                 {t.orders}
               </button>
               <button onClick={() => navigate("support")} style={{ padding: "14px 12px", background: themeColors.card, border: `1px solid ${themeColors.border}`, borderRadius: 14, cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 8, color: themeColors.text, fontSize: 13, fontWeight: 600 }}>
-                <span style={{ fontSize: 24 }}>💬</span>
+                <span style={{ fontSize: 24 }}>🤖</span>
                 {t.support}
               </button>
               <button onClick={() => navigate("settings")} style={{ padding: "14px 12px", background: themeColors.card, border: `1px solid ${themeColors.border}`, borderRadius: 14, cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 8, color: themeColors.text, fontSize: 13, fontWeight: 600 }}>
