@@ -206,7 +206,7 @@ export function CoffeeTinder({ drinks, onMatch, onClose }) {
 
     const steps = [
         { q: "Горячо или холодно?", opts: [{ l: "☕ Горячо", v: "hot" }, { l: "🧊 Холодно", v: "cold" }], key: "temp" },
-        { q: "Классическое або сладко?", opts: [{ l: "😎 Классический", v: "classic" }, { l: "🍯 Сладкое", v: "sweet" }], key: "taste" },
+        { q: "Классическое или сладко?", opts: [{ l: "😎 Классический", v: "classic" }, { l: "🍯 Сладкое", v: "sweet" }], key: "taste" },
         { q: "С кофеином или без?", opts: [{ l: "⚡ С кофеином", v: "caff" }, { l: "😴 Без", v: "decaf" }], key: "caffeine" }
     ];
 
